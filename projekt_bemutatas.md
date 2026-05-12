@@ -65,4 +65,3 @@ A weboldal elérhető: http://localhost:3000
     Táblák:
         - posts
         - comments
-
