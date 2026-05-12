@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Egyszerű blogoldal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Egyszerű blogoldal</h1>
+
+    <!-- Blog létrehozó űrlap -->
+    <div class="form-container">
+      <h2>Új blogbejegyzés</h2>
+
+      <form id="newPostForm">
+        <input type="text" id="postAuthor" placeholder="Szerző neve" required/>
+        <input type="text" id="postTitle" placeholder="Blogcikk címe" required/>
+        <textarea id="postContent" rows="6" placeholder="Blogcikk tartalma..." required></textarea>
+
+        <button type="submit">Blogbejegyzés hozzáadása</button>
+      </form>
+    </div>
+
+    <!-- Blogbejegyzések -->
+    <div id="postsContainer"></div>
+
+  </div>
+
+  <script src="script.js"></script>
+    <footer>
+        <p>&#169; 2026 SimpleBlog Project</p>
+    </footer>
+</body>
+</html>
