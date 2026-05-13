@@ -57,7 +57,25 @@ app.get('/',(req,res) => {
 //2.API végpont - új blog létrehozása
 app.post('/api/posts', (req,res) => {
     const { id, title, author, content } = req.body;
+//VALIDÁLÁS
+    if(!title || !author || !content) {
+        return res.status(400).json({
+            error: 'Minden mező kitöltése kötelező!'
+        });
+    }
 
+    if(title.length < 3) {
+        return res.status(400).json({
+            error: 'Az Ön által megadott címnek legalább 3 karakteresnek kell lennie!'
+        });
+    }
+
+    if(content.length < 5) {
+        return res.status(400).json({
+            error: 'Az Ön által megadott tartalom túl rövid!'
+        });
+    }
+    
     db.run(
         `INSERT INTO posts (title, author, content) VALUES(?,?,?)`,
         [title,author,content],
