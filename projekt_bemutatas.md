@@ -30,7 +30,7 @@
     blog.db
     package.json
     README.md
-
+    
 ## Függőségek telepítése
 npm install
 node server.js
