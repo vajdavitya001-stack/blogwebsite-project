@@ -1,4 +1,4 @@
-const posts = [];
+//const posts = [];
 const postsContainer = document.getElementById('postsContainer');
 const newPostForm = document.getElementById('newPostForm');
 
@@ -81,7 +81,7 @@ posts.forEach(post => {
             text: commentText
           });
 
-          renderPosts();
+          //renderPosts();
         });
       });
     }
@@ -93,8 +93,33 @@ posts.forEach(post => {
       const author = document.getElementById('postAuthor').value.trim();
       const title = document.getElementById('postTitle').value.trim();
       const content = document.getElementById('postContent').value.trim();
-      const comment = document.getElementsByName('comment').value.trim();
-      const response = await fetch ('/api/posts', {
+      async function loadPosts() {
+
+  const response = await fetch('/api/posts');
+
+  const posts = await response.json();
+
+  postsContainer.innerHTML = '';
+
+  posts.forEach(post => {
+
+    const postElement = document.createElement('article');
+
+    postElement.classList.add('post-card');
+
+    postElement.innerHTML = `
+      <h2>${post.title}</h2>
+      <p><strong>Szerző:</strong> ${post.author}</p>
+      <p>${post.content}</p>
+    `;
+
+    postsContainer.appendChild(postElement);
+
+  });
+
+}
+      try {
+        const response = await fetch ('/api/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -103,40 +128,31 @@ posts.forEach(post => {
         body: JSON.stringify({
           title,
           author,
-          content,
-          comment
+          content
         })
       });
-
       const data = await response.json();
-      console.log(data);
-    
-      if (!author || !title || !content || !comment) return;
-
-      const newPost = {
-        id: Date.now(),
-        author,
-        title,
-        content,
-        comment: []
-      };
-
-      posts.unshift(newPost);
-
+      if (!response.ok) {
+        alert(data.error);
+        return;
+      }
+      
       alert('A blogbejegyzés sikeresen létrejött!');
 
       newPostForm.reset();
-
-      renderPosts();
-    });
+    } catch(error) {
+        console.error(error);
+        alert("Hiba történt.");
+    } 
+      
 
     // Kezdeti render
-    renderPosts();
+    //renderPosts();
 
     //Media and Streams API beállítása
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
-    const startCameraBtn = getElementById('startCamera');
+    const startCameraBtn = document.getElementById('startCamera');
     const takePhotoBtn = document.getElementById('takePhoto');
     let stream;
     startCameraBtn.addEventListener('click',async()=>{
@@ -157,3 +173,4 @@ posts.forEach(post => {
       const context = canvas.getContext ('2d');
       context.drawImage(video,0,0,canvas.clientWidth, canvas.height);
     });
+}); 
