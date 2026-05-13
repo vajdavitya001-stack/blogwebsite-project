@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 //Adatbázis-beállítás
-db.serialize(() => {
+/* db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS posts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +32,7 @@ db.serialize(() => {
             FOREIGN KEY(post_id) REFERENCES posts(id)
         )
     `);
-});
+});*/
 
 sequelize.sync().then(() => { 
     console.log('Adatbázis szinkronizálva.');
@@ -83,38 +83,27 @@ app.post('/api/posts', async (req,res) => {
         });
 
     }
+    
+    if(title.length < 3) {
+        return res.status(400).json({
+            error: 'Az Ön által megadott címnek legalább 3 karakteresnek kell lennie!'
+        });
+    }
 
+    if(content.length < 5) {
+        return res.status(400).json({
+            error: 'Az Ön által megadott tartalom túl rövid!'
+        });
+    }
+    res.status(201).json({
+        message: 'Blog sikeresen létrehozva!',
+        id: this.lastID,
+        title,
+        author,
+        content
+    });
 });
-if(title.length < 3) {
-    return res.status(400).json({
-    error: 'Az Ön által megadott címnek legalább 3 karakteresnek kell lennie!'
-    });
-}
-
-if(content.length < 5) {
-    return res.status(400).json({
-        error: 'Az Ön által megadott tartalom túl rövid!'
-    });
-}
-
-    db.run(
-        `INSERT INTO posts (title, author, content) VALUES(?,?,?)`,
-        [title,author,content],
-        function(err) {
-            if(err) {
-                res.status(500).json({ error: err.message });
-                return;
-            }
-
-            res.status(201).json({
-                message: 'Blog sikeresen létrehozva!',
-                id: this.lastID,
-                title,
-                author,
-                content
-            });
-        }
-    );
+            
         
     //posts.push(newPost);
     //res.status(201).json(newPost);
