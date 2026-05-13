@@ -3,7 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const db = require('./db');
 const app = express();
-const sequelize = require('./database');
+const sequelize = require('./db');
 const Post = require('./models/Post');
 const Comment = require ('./models/Comment');
 Post.hasMany(Comment);
