@@ -12,28 +12,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-//Adatbázis-beállítás
-/* db.serialize(() => {
-    db.run(`
-        CREATE TABLE IF NOT EXISTS posts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            author TEXT NOT NULL,
-            content TEXT NOT NULL
-        )
-    `);
-    
-    db.run(`
-        CREATE TABLE IF NOT EXISTS comments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            post_id INTEGER,
-            username TEXT NOT NULL,
-            text TEXT NOT NULL,
-            FOREIGN KEY(post_id) REFERENCES posts(id)
-        )
-    `);
-});*/
-
 sequelize.sync().then(() => { 
     console.log('Adatbázis szinkronizálva.');
 });
@@ -42,7 +20,7 @@ sequelize.sync().then(() => {
 
 app.get('/api/posts', async (req,res) => {
     try {
-        const posts = await Post.FindAll();
+        const posts = await Post.findAll();
         res.status(200).json(posts);
     } 
     catch (error) {
@@ -50,9 +28,7 @@ app.get('/api/posts', async (req,res) => {
             error: error.message 
         });
     }
-
-    res.status(200).json(rows);
-    });
+});
 
 app.get('/',(req,res) => {
     res.sendFile(path.join(__dirname,'public','index2.html'));
@@ -60,48 +36,50 @@ app.get('/',(req,res) => {
 
 //2.API végpont - új blog létrehozása
 app.post('/api/posts', async (req,res) => {
+    console.log(req.body);
     try {
-        const { id, title, author, content } = req.body;
-//VALIDÁLÁS
+        const { title, author, content } = req.body;
+        //VALIDÁLÁS
         if(!title || !author || !content) {
             return res.status(400).json({
-            error: 'Minden mező kitöltése kötelező!'
+                error: 'Minden mező kitöltése kötelező!'
             });
         }
+        
+        if(title.length < 3) {
+            return res.status(400).json({
+                error: 'Az Ön által megadott címnek legalább 3 karakteresnek kell lennie!'
+            });
+        }
+
+        if(content.length < 5) {
+            return res.status(400).json({
+                error: 'Az Ön által megadott tartalom túl rövid!'
+            });
+        }
+
         const newPost = await Post.create({
             title,
             author,
             content
         });
-
-        res.status(201).json(newPost);
-
-    } catch (error) {
-
-        res.status(500).json({
-        error: error.message
-        });
-
-    }
+        res.status(201).json(newPost); 
     
-    if(title.length < 3) {
-        return res.status(400).json({
-            error: 'Az Ön által megadott címnek legalább 3 karakteresnek kell lennie!'
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: error.message,
+            details: error.errors
         });
-    }
 
-    if(content.length < 5) {
-        return res.status(400).json({
-            error: 'Az Ön által megadott tartalom túl rövid!'
-        });
-    }
-    res.status(201).json({
+    }  
+    /* res.status(201).json({
         message: 'Blog sikeresen létrehozva!',
         id: this.lastID,
         title,
         author,
         content
-    });
+    });*/
 });
             
         
