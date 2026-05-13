@@ -6,6 +6,7 @@ const app = express();
 const sequelize = require('./db');
 const Post = require('./models/Post');
 const Comment = require ('./models/Comment');
+const eventEmitter = require ('./queue');
 Post.hasMany(Comment);
 Comment.belongsTo(Post);
 app.use(cors());
@@ -63,7 +64,8 @@ app.post('/api/posts', async (req,res) => {
             author,
             content
         });
-        res.status(201).json(newPost); 
+        eventEmitter.emit('postCreated', newPost);
+        res.status(201).json(newPost);
     
     } catch (error) {
         console.error(error);
@@ -82,7 +84,10 @@ app.post('/api/posts', async (req,res) => {
     });*/
 });
             
-        
+eventEmitter.on('postCreated',(post) => {
+    console.log('Új blog létrehozva:');
+    console.log(post.title);
+});        
     //posts.push(newPost);
     //res.status(201).json(newPost);
 
