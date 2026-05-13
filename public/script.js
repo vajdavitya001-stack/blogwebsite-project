@@ -94,30 +94,29 @@ posts.forEach(post => {
       const title = document.getElementById('postTitle').value.trim();
       const content = document.getElementById('postContent').value.trim();
       async function loadPosts() {
-
-  const response = await fetch('/api/posts');
-
-  const posts = await response.json();
-
-  postsContainer.innerHTML = '';
-
-  posts.forEach(post => {
-
-    const postElement = document.createElement('article');
-
-    postElement.classList.add('post-card');
-
-    postElement.innerHTML = `
-      <h2>${post.title}</h2>
-      <p><strong>Szerző:</strong> ${post.author}</p>
-      <p>${post.content}</p>
-    `;
-
-    postsContainer.appendChild(postElement);
-
-  });
-
-}
+        try {
+          const response = await fetch('/api/posts');
+          const posts = await response.json();
+          postsContainer.innerHTML = '';
+          posts.forEach(post => {
+            const postElement = document.createElement('article');
+            postElement.classList.add('post-card');
+            postElement.innerHTML = `
+              <h2>${post.title}</h2>
+              <p>
+                <strong>Szerző:</strong>
+                ${post.author}
+              </p>
+              <p>${post.content}</p>
+              `;
+              postsContainer.appendChild(postElement);
+          });
+        } catch(error) {
+          console.error(error);
+        }
+      }
+    });
+  
       try {
         const response = await fetch ('/api/posts', {
         method: 'POST',
@@ -173,4 +172,3 @@ posts.forEach(post => {
       const context = canvas.getContext ('2d');
       context.drawImage(video,0,0,canvas.clientWidth, canvas.height);
     });
-}); 
