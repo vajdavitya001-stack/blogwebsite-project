@@ -46,7 +46,7 @@ app.get('/api/posts', (req,res) => {
             return;
         }
 
-    res.json(rows);
+    res.status(200).json(rows);
     });
 });
 
@@ -75,7 +75,7 @@ app.post('/api/posts', (req,res) => {
             error: 'Az Ön által megadott tartalom túl rövid!'
         });
     }
-    
+
     db.run(
         `INSERT INTO posts (title, author, content) VALUES(?,?,?)`,
         [title,author,content],
@@ -86,6 +86,7 @@ app.post('/api/posts', (req,res) => {
             }
 
             res.status(201).json({
+                message: 'Blog sikeresen létrehozva!',
                 id: this.lastID,
                 title,
                 author,
