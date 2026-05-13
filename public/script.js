@@ -132,3 +132,28 @@ posts.forEach(post => {
 
     // Kezdeti render
     renderPosts();
+
+    //Media and Streams API beállítása
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const startCameraBtn = getElementById('startCamera');
+    const takePhotoBtn = document.getElementById('takePhoto');
+    let stream;
+    startCameraBtn.addEventListener('click',async()=>{
+      try{
+        stream = await navigator.mediaDevices.getUserMedia({
+          video:true,
+          audio:false
+        });
+        video.srcObject = stream;
+      }
+      catch(error) {
+        console.error('Kamera hiba:',error);
+        alert('Nem sikerült elérni a kamerát.');
+      }
+    });
+
+    takePhotoBtn.addEventListener('click', () => {
+      const context = canvas.getContext ('2d');
+      context.drawImage(video,0,0,canvas.clientWidth, canvas.height);
+    });
