@@ -156,8 +156,10 @@ app.get('/', (req, res) => {
 // SZERVER
 const PORT = 3000;
 
-app.listen(PORT, () => {
-
+if(require.main === module) {
+    app.listen(PORT, () => {
     console.log(`Szerver fut: http://localhost:${PORT}`);
+    });
+}
 
-});
+module.exports = app;
