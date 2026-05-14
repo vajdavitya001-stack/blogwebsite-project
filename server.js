@@ -1,98 +1,163 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const db = require('./db');
-const app = express();
+
 const sequelize = require('./db');
+
 const Post = require('./models/Post');
-const Comment = require ('./models/Comment');
-const eventEmitter = require ('./queue');
+const Comment = require('./models/Comment');
+
+const app = express();
+
+
+// KAPCSOLATOK
 Post.hasMany(Comment);
+
 Comment.belongsTo(Post);
+
+
+// MIDDLEWARE
 app.use(cors());
+
 app.use(express.json());
+
 app.use(express.static('public'));
 
-sequelize.sync().then(() => { 
+
+// ADATBÁZIS SZINKRONIZÁLÁS
+sequelize.sync().then(() => {
+
     console.log('Adatbázis szinkronizálva.');
+
 });
 
-//1.API végpont - összes blog lekérése
 
-app.get('/api/posts', async (req,res) => {
+// ÖSSZES BLOG LEKÉRÉSE
+app.get('/api/posts', async (req, res) => {
+
     try {
-        const posts = await Post.findAll();
-        res.status(200).json(posts);
-    } 
-    catch (error) {
-        res.status(500).json({ 
-            error: error.message 
+
+        const posts = await Post.findAll({
+
+            include: Comment
+
         });
+
+        res.status(200).json(posts);
+
+    } catch (error) {
+
+        res.status(500).json({
+            error: error.message
+        });
+
     }
+
 });
 
-app.get('/',(req,res) => {
-    res.sendFile(path.join(__dirname,'public','index2.html'));
-});
 
-//2.API végpont - új blog létrehozása
-app.post('/api/posts', async (req,res) => {
-    console.log(req.body);
+// ÚJ BLOG LÉTREHOZÁSA
+app.post('/api/posts', async (req, res) => {
+
     try {
+
         const { title, author, content } = req.body;
-        //VALIDÁLÁS
-        if(!title || !author || !content) {
+
+        // VALIDÁLÁS
+        if (!title || !author || !content) {
+
             return res.status(400).json({
                 error: 'Minden mező kitöltése kötelező!'
             });
-        }
-        
-        if(title.length < 3) {
-            return res.status(400).json({
-                error: 'Az Ön által megadott címnek legalább 3 karakteresnek kell lennie!'
-            });
+
         }
 
-        if(content.length < 5) {
+        if (title.length < 3) {
+
             return res.status(400).json({
-                error: 'Az Ön által megadott tartalom túl rövid!'
+                error: 'A cím túl rövid!'
             });
+
+        }
+
+        if (content.length < 5) {
+
+            return res.status(400).json({
+                error: 'A tartalom túl rövid!'
+            });
+
         }
 
         const newPost = await Post.create({
+
             title,
             author,
             content
+
         });
-        eventEmitter.emit('postCreated', newPost);
+
         res.status(201).json(newPost);
-    
+
     } catch (error) {
-        console.error(error);
+
         res.status(500).json({
-            error: error.message,
-            details: error.errors
+            error: error.message
         });
 
-    }  
-    /* res.status(201).json({
-        message: 'Blog sikeresen létrehozva!',
-        id: this.lastID,
-        title,
-        author,
-        content
-    });*/
-});
-            
-eventEmitter.on('postCreated',(post) => {
-    console.log('Új blog létrehozva:');
-    console.log(post.title);
-});        
-    //posts.push(newPost);
-    //res.status(201).json(newPost);
+    }
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Szerver fut: http://localhost:${PORT}`);
 });
-module.exports = app;
+
+
+// ÚJ KOMMENT
+app.post('/api/comments', async (req, res) => {
+
+    try {
+
+        const { username, text, PostId } = req.body;
+
+        if (!username || !text) {
+
+            return res.status(400).json({
+                error: 'Minden mező kitöltése kötelező!'
+            });
+
+        }
+
+        const newComment = await Comment.create({
+
+            username,
+            text,
+            PostId
+
+        });
+
+        res.status(201).json(newComment);
+
+    } catch (error) {
+
+        res.status(500).json({
+            error: error.message
+        });
+
+    }
+
+});
+
+
+// FŐOLDAL
+app.get('/', (req, res) => {
+
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+
+});
+
+
+// SZERVER
+const PORT = 3000;
+
+app.listen(PORT, () => {
+
+    console.log(`Szerver fut: http://localhost:${PORT}`);
+
+});

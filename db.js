@@ -7,11 +7,23 @@ const db = new sqlite3.Database('./blog.db', (err) => {
     }
 });
 
-module.exports = db; */
+module.exports = db; 
 
 const { Sequelize } = require('sequelize');
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: './blog.db'
 });
+module.exports = sequelize;
+*/
+const { Sequelize } = require('sequelize');
+
+const sequelize = new Sequelize({
+
+    dialect: 'sqlite',
+
+    storage: './blog.db'
+
+});
+
 module.exports = sequelize;
