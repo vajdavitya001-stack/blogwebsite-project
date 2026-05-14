@@ -84,9 +84,17 @@ async function loadPosts() {
 
                 e.preventDefault();
 
-                const username = commentForm.querySelector('.commentUsername').value;
+                const username = commentForm.querySelector('.commentUsername').value.trim();
 
-                const text = commentForm.querySelector('.commentText').value;
+                const text = commentForm.querySelector('.commentText').value.trim();
+
+                // VALIDÁLÁS
+                if (!username || !text) {
+
+                alert('Minden mezőt ki kell tölteni!');
+
+                return;
+                }
 
                 try {
 
@@ -117,13 +125,14 @@ async function loadPosts() {
                         return;
 
                     }
+                    alert('Komment sikeresen elküldve!');
 
                     loadPosts();
 
                 } catch (error) {
 
                     console.error(error);
-
+                    alert('Hiba történt!');
                 }
 
             });

@@ -135,7 +135,7 @@ app.post('/api/comments', async (req, res) => {
         res.status(201).json(newComment);
 
     } catch (error) {
-
+        console.error(error);
         res.status(500).json({
             error: error.message
         });
@@ -148,7 +148,7 @@ app.post('/api/comments', async (req, res) => {
 // FŐOLDAL
 app.get('/', (req, res) => {
 
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index2.html'));
 
 });
 
