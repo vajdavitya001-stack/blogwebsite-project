@@ -17,8 +17,8 @@ describe('Blog API tesztek', () => {
         });
 
         expect(response.statusCode).toBe(201);
-        expect(response.body.title).toBe('Teszt cím');
-        expect(response.body.author).toBe('Teszt szerző');
+        expect(response.body.post.title).toBe('Teszt cím');
+        expect(response.body.post.author).toBe('Teszt szerző');
     });
 });
 

@@ -24,6 +24,11 @@ body {
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
+    #postsContainer {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
     input,
     textarea,
     button {
