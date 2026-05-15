@@ -10,13 +10,11 @@ const Comment = require('./models/Comment');
 const app = express();
 
 
-// KAPCSOLATOK
 Post.hasMany(Comment);
 
 Comment.belongsTo(Post);
 
 
-// MIDDLEWARE
 app.use(cors());
 
 app.use(express.json());
